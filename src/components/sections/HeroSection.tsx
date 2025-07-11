@@ -54,7 +54,7 @@ const Hero = () => {
               </Link>
               
               <button 
-                onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => document.getElementById('galeri')?.scrollIntoView({ behavior: 'smooth' })}
                 className="px-6 py-3 bg-white text-indigo-600 rounded-full font-medium hover:bg-gray-50 transition-all shadow-lg hover:shadow-gray-200 flex items-center justify-center transform hover:scale-105"
               >
                 Lihat Fasilitas <FontAwesomeIcon icon={faArrowRight} className="ml-2" />

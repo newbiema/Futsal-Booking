@@ -5,6 +5,7 @@ import Navbar from '@/components/layout/Navbar';
 import HeroSection from '@/components/sections/HeroSection';
 import GallerySection from '@/components/sections/GallerySection';
 import Footer from '@/components/layout/Footer'
+import BookingList from '@/components/sections/BookingList';
 // import Button from '@/components/ui/Button'
 
 
@@ -14,11 +15,8 @@ const LandingPage = () => {
       <div id='navbar'><Navbar /></div>
       <div id='hero'><HeroSection/></div>
       <div id='galeri'><GallerySection/></div>
-      <div id='kontak'><Footer /></div>
-       
-      
-
-      
+      <div id='footer'><BookingList/></div>
+      <div id='kontak'><Footer/></div>
 
     </div>
   )

@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFutbol, faHome, faCalendarAlt, faTrophy, faPhoneAlt, faUser, faBars, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faFutbol, faHome, faCalendarAlt, faTrophy, faPhoneAlt, faUser, faBars, faTimes, faLock } from '@fortawesome/free-solid-svg-icons'
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -120,11 +120,11 @@ const Header = () => {
               Contact
             </button>
             <Link
-              href="/booking"
+              href="/admin"
               className="ml-2 px-4 lg:px-6 py-2 rounded-full bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors shadow-sm hover:shadow-md flex items-center transform hover:scale-105 transition-transform"
             >
-              <FontAwesomeIcon icon={faCalendarAlt} className="mr-2" />
-              Book Now
+              <FontAwesomeIcon icon={faLock} className="mr-2" />
+              Login Admin
             </Link>
           </nav>
 
