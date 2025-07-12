@@ -4,8 +4,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { BookingTable } from '@/app/admin/bookings/components/booking-table';
-import { BookingForm } from '@/app/admin/bookings/components/booking-form';
+import { BookingTable } from './components/booking-table';
+import { BookingForm } from './components/booking-form'; // Tambahkan ini
 
 export default function BookingsPage() {
   const [showForm, setShowForm] = useState(false);

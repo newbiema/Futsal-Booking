@@ -15,7 +15,7 @@ const LandingPage = () => {
       <div id='navbar'><Navbar /></div>
       <div id='hero'><HeroSection/></div>
       <div id='galeri'><GallerySection/></div>
-      <div id='footer'><BookingList/></div>
+      <div id='booking'><BookingList/></div>
       <div id='kontak'><Footer/></div>
 
     </div>
