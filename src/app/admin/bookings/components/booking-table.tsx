@@ -6,7 +6,6 @@ import { getBookings, deleteBooking } from '@/services/bookingService';
 import { Button } from '@/components/ui/button';
 import { Edit, Trash2 } from 'lucide-react';
 import { BookingForm } from './booking-form';
-// Tambahkan di bagian import
 import { Booking } from '@/types/booking';
 
 export function BookingTable() {
@@ -38,6 +37,22 @@ export function BookingTable() {
     }
   };
 
+  const formatPrice = (value: number) =>
+    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value);
+
+  const statusColor = (status: Booking['status']) => {
+    switch (status) {
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'confirmed':
+        return 'bg-green-100 text-green-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   useEffect(() => {
     fetchBookings();
   }, []);
@@ -58,15 +73,19 @@ export function BookingTable() {
         />
       )}
 
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           {/* Table header */}
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left">Nama</th>
-              <th className="px-6 py-3 text-left">Tanggal</th>
-              <th className="px-6 py-3 text-left">Waktu</th>
-              <th className="px-6 py-3 text-right">Aksi</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Nama</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">No. HP</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Tanggal</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Waktu</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Durasi</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Harga</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
+              <th className="px-6 py-3 text-right text-sm font-semibold text-gray-700">Aksi</th>
             </tr>
           </thead>
           
@@ -74,10 +93,18 @@ export function BookingTable() {
           <tbody className="bg-white divide-y divide-gray-200">
             {bookings.map((booking) => (
               <tr key={booking.id}>
-                <td className="px-6 py-4">{booking.name}</td>
-                <td className="px-6 py-4">{new Date(booking.date).toLocaleDateString('id-ID')}</td>
-                <td className="px-6 py-4">{booking.time}</td>
-                <td className="px-6 py-4 text-right space-x-2">
+                <td className="px-6 py-4 whitespace-nowrap">{booking.name}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{booking.phone}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{new Date(booking.date).toLocaleDateString('id-ID')}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{booking.time}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{booking.duration} jam</td>
+                <td className="px-6 py-4 whitespace-nowrap">{formatPrice(booking.price)}</td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className={`px-3 py-1 text-xs font-medium rounded-full ${statusColor(booking.status)}`}>
+                    {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right space-x-2">
                   <Button 
                     variant="outline" 
                     size="sm"

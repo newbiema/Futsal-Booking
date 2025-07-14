@@ -1,8 +1,20 @@
 // src/app/api/admin/route.ts
 import { NextResponse } from 'next/server';
 
-// Menyimpan booking sementara
-const bookings: { id: number; name: string; date: string; time: string }[] = [];
+// Interface untuk struktur data booking
+interface Booking {
+  id: number;
+  name: string;
+  phone: string;
+  date: string;
+  time: string;
+  duration: number;
+  price: number;
+  status: 'pending' | 'confirmed' | 'cancelled';
+}
+
+// Menyimpan booking sementara (sebagai pengganti database)
+const bookings: Booking[] = [];
 
 // GET - Mengambil daftar booking
 export async function GET() {
@@ -11,46 +23,106 @@ export async function GET() {
 
 // POST - Menambah booking baru
 export async function POST(request: Request) {
-  const { name, date, time }: { name: string; date: string; time: string } = await request.json();
-
-  if (!name || !date || !time) {
-    return NextResponse.json({ message: 'Semua kolom harus diisi!' }, { status: 400 });
+  const data: Omit<Booking, 'id' | 'status'> & { duration: string } = await request.json();
+  
+  // Validasi data
+  if (!data.name || !data.phone || !data.date || !data.time || !data.duration) {
+    return NextResponse.json(
+      { message: 'Semua kolom harus diisi!' }, 
+      { status: 400 }
+    );
   }
 
-  const newBooking = { id: Date.now(), name, date, time };
+  // Hitung harga berdasarkan waktu booking
+  const hour = parseInt(data.time.split(':')[0]);
+  const duration = parseInt(data.duration);
+  const isMorning = hour >= 8 && hour < 17;
+  const basePrice = isMorning ? 80000 : 100000;
+  const price = basePrice * duration;
+
+  const newBooking: Booking = {
+    id: Date.now(),
+    name: data.name,
+    phone: data.phone,
+    date: data.date,
+    time: data.time,
+    duration: duration,
+    price: price,
+    status: 'confirmed'
+  };
+
   bookings.push(newBooking);
 
-  return NextResponse.json({ message: 'Booking berhasil ditambahkan!' }, { status: 201 });
+  return NextResponse.json(
+    { 
+      message: 'Booking berhasil ditambahkan!',
+      booking: newBooking 
+    },
+    { status: 201 }
+  );
 }
 
-// PUT - Mengupdate booking berdasarkan ID
+// PUT - Mengupdate booking
 export async function PUT(request: Request) {
-  const { id, name, date, time }: { id: number; name: string; date: string; time: string } = await request.json();
+  const data: Partial<Booking> & { id: number; duration?: string } = await request.json();
 
-  if (!id || !name || !date || !time) {
-    return NextResponse.json({ message: 'Semua kolom harus diisi!' }, { status: 400 });
+  if (!data.id) {
+    return NextResponse.json(
+      { message: 'ID booking harus disertakan!' },
+      { status: 400 }
+    );
   }
 
-  const index = bookings.findIndex(booking => booking.id === id);
+  const index = bookings.findIndex(booking => booking.id === data.id);
   if (index === -1) {
-    return NextResponse.json({ message: 'Booking tidak ditemukan!' }, { status: 404 });
+    return NextResponse.json(
+      { message: 'Booking tidak ditemukan!' },
+      { status: 404 }
+    );
   }
 
-  bookings[index] = { id, name, date, time };
+  // Update data booking
+  const updatedBooking = {
+    ...bookings[index],
+    ...data,
+    duration: data.duration ? parseInt(data.duration) : bookings[index].duration
+  };
 
-  return NextResponse.json({ message: 'Booking berhasil diupdate!' }, { status: 200 });
+  // Hitung ulang harga jika waktu atau durasi berubah
+  if (data.time || data.duration) {
+    const hour = parseInt(updatedBooking.time.split(':')[0]);
+    const isMorning = hour >= 8 && hour < 17;
+    const basePrice = isMorning ? 80000 : 100000;
+    updatedBooking.price = basePrice * updatedBooking.duration;
+  }
+
+  bookings[index] = updatedBooking;
+
+  return NextResponse.json(
+    { 
+      message: 'Booking berhasil diupdate!',
+      booking: updatedBooking 
+    },
+    { status: 200 }
+  );
 }
 
-// DELETE - Menghapus booking berdasarkan ID
+// DELETE - Menghapus booking
 export async function DELETE(request: Request) {
   const { id }: { id: number } = await request.json();
 
   const index = bookings.findIndex(booking => booking.id === id);
   if (index === -1) {
-    return NextResponse.json({ message: 'Booking tidak ditemukan!' }, { status: 404 });
+    return NextResponse.json(
+      { message: 'Booking tidak ditemukan!' },
+      { status: 404 }
+    );
   }
 
   bookings.splice(index, 1);
 
-  return NextResponse.json({ message: 'Booking berhasil dihapus!' }, { status: 200 });
+  return NextResponse.json(
+    { message: 'Booking berhasil dihapus!' },
+    { status: 200 }
+  );
 }
